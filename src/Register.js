@@ -3,10 +3,10 @@ import './LoginForm.css';
 import { FaUser, FaLock, FaPhone, FaEyeSlash } from "react-icons/fa";
 import { MdMail } from "react-icons/md";
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import useHistory hook
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
-    const navigate = useNavigate(); // Create history object
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: '',
         phone: '',
@@ -30,11 +30,15 @@ const Register = () => {
         try {
             await axios.post('http://localhost:5000/register', { email, phone, username, password, confirmPassword });
             alert('Registration successful');
-            // Redirect to login page
             navigate('/login');
         } catch (error) {
-            console.error('Error registering user:', error.response.data); // Log detailed error message
-            alert('Registration failed: ' + error.response.data); // Display error to the user
+            if (error.response && error.response.data) {
+                console.error('Error registering user:', error.response.data);
+                alert('Registration failed: ' + error.response.data.message || error.response.data);
+            } else {
+                console.error('Error registering user:', error.message);
+                alert('Registration failed: ' + error.message);
+            }
         }
     };
 
@@ -68,6 +72,9 @@ const Register = () => {
                             <FaEyeSlash className='icon'/>
                         </div>
                         <button type="submit">SignUp</button>
+                        <div className="register-link">
+                            <p>Already have an account <a href='/login'>Login</a></p>
+                        </div>
                     </form>
                 </div>
             </div>
